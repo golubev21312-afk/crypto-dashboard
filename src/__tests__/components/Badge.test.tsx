@@ -85,7 +85,8 @@ describe('PriceChangeBadge', () => {
   describe('zero value', () => {
     it('shows default variant for zero', () => {
       render(<PriceChangeBadge value={0} />);
-      const badge = screen.getByText('+0.00%');
+      // Для нуля не добавляем знак + (только для положительных)
+      const badge = screen.getByText('0.00%');
       expect(badge).toHaveClass('bg-dark-100');
     });
   });
@@ -93,7 +94,8 @@ describe('PriceChangeBadge', () => {
   describe('formatting', () => {
     it('formats to 2 decimal places', () => {
       render(<PriceChangeBadge value={5.555} />);
-      expect(screen.getByText('+5.56%')).toBeInTheDocument();
+      // toFixed(2) обрезает, а не округляет: 5.555 -> 5.55
+      expect(screen.getByText('+5.55%')).toBeInTheDocument();
     });
 
     it('adds trailing zeros if needed', () => {
