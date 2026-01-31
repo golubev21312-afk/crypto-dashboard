@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useCoins } from '@/hooks';
+import { useI18n } from '@/lib/i18n';
 import { Button, Input } from '@/components/ui';
 import { CoinRow, CoinRowSkeleton } from './CoinRow';
 
@@ -19,6 +20,7 @@ export function CoinList({
   showSearch = true,
   showLoadMore = true,
 }: CoinListProps) {
+  const { t } = useI18n();
   const [perPage, setPerPage] = useState(initialPerPage);
   const [search, setSearch] = useState('');
 
@@ -34,7 +36,7 @@ export function CoinList({
   if (error) {
     return (
       <div className="rounded-lg border border-danger-200 bg-danger-50 p-4 text-danger-600 dark:border-danger-800 dark:bg-danger-950 dark:text-danger-400">
-        Failed to load coins: {error.message}
+        {t('common.errorLoading')}: {error.message}
       </div>
     );
   }
@@ -44,7 +46,7 @@ export function CoinList({
       {/* Поиск */}
       {showSearch && (
         <Input
-          placeholder="Search coins..."
+          placeholder={t('coins.search')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           leftElement={
@@ -67,27 +69,24 @@ export function CoinList({
 
       {/* Заголовок таблицы */}
       <div className="flex items-center gap-4 border-b border-dark-200 px-4 py-2 text-sm font-medium text-dark-500 dark:border-dark-700">
-        <span className="w-8 text-center">#</span>
-        <span className="flex-1">Coin</span>
-        <span className="text-right">Price</span>
-        <span className="w-24 text-right">24h</span>
-        <span className="hidden w-32 text-right md:block">Market Cap</span>
+        <span className="w-8 text-center">{t('coins.rank')}</span>
+        <span className="flex-1">{t('coins.coin')}</span>
+        <span className="text-right">{t('coins.price')}</span>
+        <span className="w-24 text-right">{t('coins.change24h')}</span>
+        <span className="hidden w-32 text-right md:block">{t('coins.marketCap')}</span>
       </div>
 
       {/* Список */}
       <div className="divide-y divide-dark-100 dark:divide-dark-800">
         {isLoading ? (
-          // Скелетоны при загрузке
           Array.from({ length: 10 }).map((_, i) => <CoinRowSkeleton key={i} />)
         ) : filteredCoins && filteredCoins.length > 0 ? (
-          // Монеты
           filteredCoins.map((coin, index) => (
             <CoinRow key={coin.id} coin={coin} index={index} />
           ))
         ) : (
-          // Пусто
           <div className="py-12 text-center text-dark-500">
-            {search ? 'No coins found' : 'No coins available'}
+            {search ? t('coins.noCoins') : t('coins.noAvailable')}
           </div>
         )}
       </div>
@@ -99,7 +98,7 @@ export function CoinList({
             variant="outline"
             onClick={() => setPerPage((prev) => prev + 20)}
           >
-            Load More
+            {t('coins.loadMore')}
           </Button>
         </div>
       )}

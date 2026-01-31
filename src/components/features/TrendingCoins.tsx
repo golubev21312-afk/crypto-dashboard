@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTrendingCoins } from '@/hooks';
+import { useI18n } from '@/lib/i18n';
 import { Skeleton } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils';
  * TrendingCoins — виджет трендовых монет
  */
 export function TrendingCoins() {
+  const { t } = useI18n();
   const { data, isLoading, error } = useTrendingCoins();
 
   if (error) {
@@ -20,13 +22,12 @@ export function TrendingCoins() {
     <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
       <h3 className="mb-4 flex items-center gap-2 font-semibold text-dark-900 dark:text-dark-50">
         <span className="text-xl">🔥</span>
-        Trending
+        {t('trending.title')}
       </h3>
 
       <div className="space-y-3">
         {isLoading
-          ? // Скелетоны
-            Array.from({ length: 5 }).map((_, i) => (
+          ? Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-center gap-3">
                 <Skeleton variant="circular" width={32} height={32} />
                 <div className="flex-1">
@@ -35,8 +36,7 @@ export function TrendingCoins() {
                 </div>
               </div>
             ))
-          : // Монеты
-            data?.coins.slice(0, 5).map((item, index) => (
+          : data?.coins.slice(0, 5).map((item, index) => (
               <Link
                 key={item.item.id}
                 href={`/coins/${item.item.id}`}

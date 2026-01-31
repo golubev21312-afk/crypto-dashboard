@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCoins, useGlobalData } from '@/hooks';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency, formatCompact } from '@/lib/utils';
 import { Button } from '@/components/ui';
 import { StatCard, CoinList, TrendingCoins } from '@/components/features';
@@ -37,8 +38,8 @@ function CoinsIcon({ className }: { className?: string }) {
  * Dashboard — главная страница
  */
 export default function DashboardPage() {
+  const { t } = useI18n();
   const { data: globalData, isLoading: globalLoading } = useGlobalData();
-  const { data: topCoins, isLoading: coinsLoading } = useCoins({ perPage: 5 });
 
   const totalMarketCap = globalData?.data.total_market_cap.usd || 0;
   const totalVolume = globalData?.data.total_volume.usd || 0;
@@ -50,36 +51,36 @@ export default function DashboardPage() {
       {/* Заголовок */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-dark-900 dark:text-dark-50">
-          Dashboard
+          {t('dashboard.title')}
         </h1>
         <p className="mt-1 text-dark-500 dark:text-dark-400">
-          Cryptocurrency market overview
+          {t('dashboard.subtitle')}
         </p>
       </div>
 
       {/* Статистика */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Market Cap"
+          title={t('dashboard.totalMarketCap')}
           value={formatCompact(totalMarketCap)}
           change={marketCapChange}
           icon={<ChartIcon className="h-5 w-5" />}
           isLoading={globalLoading}
         />
         <StatCard
-          title="24h Volume"
+          title={t('dashboard.volume24h')}
           value={formatCompact(totalVolume)}
           icon={<WalletIcon className="h-5 w-5" />}
           isLoading={globalLoading}
         />
         <StatCard
-          title="BTC Dominance"
+          title={t('dashboard.btcDominance')}
           value={`${btcDominance.toFixed(1)}%`}
           icon={<CoinsIcon className="h-5 w-5" />}
           isLoading={globalLoading}
         />
         <StatCard
-          title="Active Coins"
+          title={t('dashboard.activeCoins')}
           value={globalData?.data.active_cryptocurrencies.toLocaleString() || '0'}
           isLoading={globalLoading}
         />
@@ -91,11 +92,11 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold text-dark-900 dark:text-dark-50">
-              Top Cryptocurrencies
+              {t('dashboard.topCryptos')}
             </h2>
             <Link href="/coins">
               <Button variant="ghost" size="sm">
-                View All →
+                {t('dashboard.viewAll')}
               </Button>
             </Link>
           </div>
@@ -117,17 +118,17 @@ export default function DashboardPage() {
           {/* Быстрые действия */}
           <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
             <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-              Quick Actions
+              {t('dashboard.quickActions')}
             </h3>
             <div className="space-y-2">
               <Link href="/portfolio" className="block">
                 <Button variant="outline" fullWidth>
-                  Manage Portfolio
+                  {t('dashboard.managePortfolio')}
                 </Button>
               </Link>
               <Link href="/coins" className="block">
                 <Button variant="ghost" fullWidth>
-                  Browse All Coins
+                  {t('dashboard.browseCoins')}
                 </Button>
               </Link>
             </div>

@@ -2,9 +2,11 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider, ThemeProvider } from '@/lib/providers';
+import { I18nProvider } from '@/lib/i18n';
+import { Header } from '@/components/layout';
 
 const inter = Inter({
-  subsets: ['latin', 'cyrillic'],
+  subsets: ['latin', 'cyrillic', 'vietnamese'],
   display: 'swap',
   variable: '--font-inter',
 });
@@ -25,11 +27,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider defaultTheme="system">
-          <QueryProvider>
-            <div className="min-h-screen bg-dark-50 dark:bg-dark-900">
-              {children}
-            </div>
-          </QueryProvider>
+          <I18nProvider>
+            <QueryProvider>
+              <div className="min-h-screen bg-dark-50 dark:bg-dark-900">
+                <Header />
+                {children}
+              </div>
+            </QueryProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

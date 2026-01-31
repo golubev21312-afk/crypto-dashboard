@@ -3,16 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/lib/providers';
+import { useI18n, locales, localeNames, type Locale } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
-
-/**
- * Навигационные ссылки
- */
-const navLinks = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/coins', label: 'Coins' },
-  { href: '/portfolio', label: 'Portfolio' },
-];
 
 /**
  * Иконка солнца
@@ -62,10 +54,17 @@ function MoonIcon({ className }: { className?: string }) {
 export function Header() {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
+  const { t, locale, setLocale } = useI18n();
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
+
+  const navLinks = [
+    { href: '/', label: t('nav.dashboard') },
+    { href: '/coins', label: t('nav.coins') },
+    { href: '/portfolio', label: t('nav.portfolio') },
+  ];
 
   return (
     <header className="sticky top-0 z-40 border-b border-dark-200 bg-white/80 backdrop-blur-md dark:border-dark-700 dark:bg-dark-900/80">
@@ -104,6 +103,23 @@ export function Header() {
 
           {/* Правая часть */}
           <div className="flex items-center gap-2">
+            {/* Переключатель языка */}
+            <select
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as Locale)}
+              className={cn(
+                'rounded-lg border border-dark-200 bg-white px-2 py-1.5 text-sm',
+                'dark:border-dark-700 dark:bg-dark-800',
+                'focus:outline-none focus:ring-2 focus:ring-primary-500'
+              )}
+            >
+              {locales.map((loc) => (
+                <option key={loc} value={loc}>
+                  {localeNames[loc]}
+                </option>
+              ))}
+            </select>
+
             {/* Переключатель темы */}
             <button
               onClick={toggleTheme}

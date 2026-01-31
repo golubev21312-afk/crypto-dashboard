@@ -1,20 +1,23 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
 import { CoinList } from '@/components/features';
 
 /**
  * CoinsPage — страница со списком всех монет
  */
 export default function CoinsPage() {
+  const { t } = useI18n();
+
   return (
     <main className="container-app py-8">
       {/* Заголовок */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-dark-900 dark:text-dark-50">
-          Cryptocurrencies
+          {t('coins.title')}
         </h1>
         <p className="mt-1 text-dark-500 dark:text-dark-400">
-          Browse and search all available cryptocurrencies
+          {t('coins.subtitle')}
         </p>
       </div>
 
