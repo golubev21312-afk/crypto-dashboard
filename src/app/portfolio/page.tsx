@@ -3,22 +3,26 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { usePortfolio, useCoins } from '@/hooks';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/utils';
 import {
   Button,
   Input,
   Modal,
-  Badge,
   PriceChangeBadge,
   Skeleton,
 } from '@/components/ui';
 import { StatCard } from '@/components/features';
-import type { PortfolioAsset } from '@/types';
 
 /**
  * PortfolioPage — страница управления портфелем
+ * 
+ * ---
+ * 
+ * PortfolioPage — portfolio management page
  */
 export default function PortfolioPage() {
+  const { t } = useI18n();
   const {
     assets,
     isLoaded,
@@ -111,69 +115,71 @@ export default function PortfolioPage() {
 
   return (
     <main className="container-app py-8">
-      {/* Заголовок */}
+      {/* Заголовок / Header */}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-dark-900 dark:text-dark-50">
-            Portfolio
+            {t('portfolio.title')}
           </h1>
           <p className="mt-1 text-dark-500 dark:text-dark-400">
-            Track your cryptocurrency investments
+            {t('portfolio.subtitle')}
           </p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>+ Add Asset</Button>
+        <Button onClick={() => setIsModalOpen(true)}>
+          {t('portfolio.addAsset')}
+        </Button>
       </div>
 
-      {/* Статистика */}
+      {/* Статистика / Statistics */}
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <StatCard
-          title="Total Value"
+          title={t('portfolio.totalValue')}
           value={formatCurrency(totalValue)}
           isLoading={coinsLoading && assets.length > 0}
         />
         <StatCard
-          title="Total Invested"
+          title={t('portfolio.totalInvested')}
           value={formatCurrency(totalInvested)}
         />
         <StatCard
-          title="Profit / Loss"
+          title={t('portfolio.profitLoss')}
           value={formatCurrency(Math.abs(totalProfitLoss))}
           change={totalProfitLossPercent}
           isLoading={coinsLoading && assets.length > 0}
         />
       </div>
 
-      {/* Список активов */}
+      {/* Список активов / Asset list */}
       <div className="rounded-xl border border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800">
         {assets.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="text-lg text-dark-500">Your portfolio is empty</p>
+            <p className="text-lg text-dark-500">{t('portfolio.empty')}</p>
             <p className="mt-1 text-sm text-dark-400">
-              Add your first asset to start tracking
+              {t('portfolio.emptyHint')}
             </p>
             <Button className="mt-4" onClick={() => setIsModalOpen(true)}>
-              + Add Asset
+              {t('portfolio.addAsset')}
             </Button>
           </div>
         ) : (
           <>
-            {/* Заголовок таблицы */}
+            {/* Заголовок таблицы / Table header */}
             <div className="flex items-center gap-4 border-b border-dark-200 px-6 py-3 text-sm font-medium text-dark-500 dark:border-dark-700">
-              <span className="flex-1">Asset</span>
-              <span className="w-24 text-right">Amount</span>
-              <span className="w-28 text-right">Price</span>
-              <span className="w-28 text-right">Value</span>
-              <span className="w-24 text-right">P/L</span>
+              <span className="flex-1">{t('portfolio.asset')}</span>
+              <span className="w-24 text-right">{t('portfolio.amount')}</span>
+              <span className="w-28 text-right">{t('coins.price')}</span>
+              <span className="w-28 text-right">{t('portfolio.value')}</span>
+              <span className="w-24 text-right">{t('portfolio.pl')}</span>
               <span className="w-20" />
             </div>
 
-            {/* Активы */}
+            {/* Активы / Assets */}
             {portfolioWithValues.map((asset) => (
               <div
                 key={asset.id}
                 className="flex items-center gap-4 border-b border-dark-100 px-6 py-4 last:border-b-0 dark:border-dark-800"
               >
-                {/* Монета */}
+                {/* Монета / Coin */}
                 <div className="flex min-w-0 flex-1 items-center gap-3">
                   {asset.coinData?.image && (
                     <Image
@@ -194,24 +200,24 @@ export default function PortfolioPage() {
                   </div>
                 </div>
 
-                {/* Количество */}
+                {/* Количество / Amount */}
                 <div className="w-24 text-right">
                   <p className="font-medium text-dark-900 dark:text-dark-50">
                     {asset.amount}
                   </p>
                 </div>
 
-                {/* Цена */}
+                {/* Цена / Price */}
                 <div className="w-28 text-right">
                   <p className="text-dark-900 dark:text-dark-50">
                     {formatCurrency(asset.currentPrice)}
                   </p>
                   <p className="text-xs text-dark-500">
-                    Avg: {formatCurrency(asset.purchasePrice)}
+                    {t('portfolio.avgPrice')}: {formatCurrency(asset.purchasePrice)}
                   </p>
                 </div>
 
-                {/* Стоимость */}
+                {/* Стоимость / Value */}
                 <div className="w-28 text-right">
                   <p className="font-medium text-dark-900 dark:text-dark-50">
                     {formatCurrency(asset.currentValue)}
@@ -223,14 +229,14 @@ export default function PortfolioPage() {
                   <PriceChangeBadge value={asset.profitLossPercent} />
                 </div>
 
-                {/* Удалить */}
+                {/* Удалить / Remove */}
                 <div className="w-20 text-right">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => removeAsset(asset.id)}
                   >
-                    Remove
+                    {t('portfolio.remove')}
                   </Button>
                 </div>
               </div>
@@ -239,18 +245,18 @@ export default function PortfolioPage() {
         )}
       </div>
 
-      {/* Модалка добавления актива */}
+      {/* Модалка добавления актива / Add asset modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Add Asset"
-        description="Add a cryptocurrency to your portfolio"
+        title={t('modal.addAsset')}
+        description={t('modal.addAssetDesc')}
       >
         <div className="space-y-4">
-          {/* Выбор монеты */}
+          {/* Выбор монеты / Coin select */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-dark-700 dark:text-dark-300">
-              Coin
+              {t('modal.coin')}
             </label>
             <select
               value={newAsset.coinId}
@@ -259,7 +265,7 @@ export default function PortfolioPage() {
               }
               className="w-full rounded-lg border border-dark-300 bg-white px-4 py-2.5 text-dark-900 dark:border-dark-600 dark:bg-dark-800 dark:text-dark-100"
             >
-              <option value="">Select coin...</option>
+              <option value="">{t('modal.selectCoin')}</option>
               {allCoins?.map((coin) => (
                 <option key={coin.id} value={coin.id}>
                   {coin.name} ({coin.symbol.toUpperCase()})
@@ -268,9 +274,9 @@ export default function PortfolioPage() {
             </select>
           </div>
 
-          {/* Количество */}
+          {/* Количество / Amount */}
           <Input
-            label="Amount"
+            label={t('portfolio.amount')}
             type="number"
             step="any"
             placeholder="0.00"
@@ -280,9 +286,9 @@ export default function PortfolioPage() {
             }
           />
 
-          {/* Цена покупки */}
+          {/* Цена покупки / Purchase price */}
           <Input
-            label="Purchase Price (USD)"
+            label={t('modal.purchasePrice')}
             type="number"
             step="any"
             placeholder="0.00"
@@ -298,9 +304,9 @@ export default function PortfolioPage() {
 
         <Modal.Footer>
           <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
-            Cancel
+            {t('modal.cancel')}
           </Button>
-          <Button onClick={handleAddAsset}>Add Asset</Button>
+          <Button onClick={handleAddAsset}>{t('modal.add')}</Button>
         </Modal.Footer>
       </Modal>
     </main>

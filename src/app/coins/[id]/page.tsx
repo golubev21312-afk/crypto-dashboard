@@ -1,31 +1,35 @@
 'use client';
 
-import { use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useCoinDetails } from '@/hooks';
+import { useI18n } from '@/lib/i18n';
 import { formatCurrency, formatCompact } from '@/lib/utils';
 import { Button, Badge, PriceChangeBadge, Skeleton } from '@/components/ui';
-
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+import { PriceChart } from '@/components/features';
 
 /**
  * CoinDetailPage — страница с детальной информацией о монете
+ * 
+ * ---
+ * 
+ * CoinDetailPage — coin detail page with chart
  */
-export default function CoinDetailPage({ params }: PageProps) {
-  const { id } = use(params);
+export default function CoinDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const { t } = useI18n();
   const { data: coin, isLoading, error } = useCoinDetails(id);
 
   if (error) {
     return (
       <main className="container-app py-8">
         <div className="rounded-lg border border-danger-200 bg-danger-50 p-6 text-danger-600 dark:border-danger-800 dark:bg-danger-950 dark:text-danger-400">
-          <h2 className="font-semibold">Error loading coin</h2>
+          <h2 className="font-semibold">{t('coinDetail.errorLoading')}</h2>
           <p className="mt-1">{error.message}</p>
           <Link href="/coins" className="mt-4 inline-block">
-            <Button variant="outline">← Back to Coins</Button>
+            <Button variant="outline">{t('coinDetail.backToCoins')}</Button>
           </Link>
         </div>
       </main>
@@ -60,15 +64,15 @@ export default function CoinDetailPage({ params }: PageProps) {
 
   return (
     <main className="container-app py-8">
-      {/* Навигация */}
+      {/* Навигация / Navigation */}
       <Link
         href="/coins"
         className="mb-6 inline-flex items-center gap-1 text-sm text-dark-500 hover:text-dark-700 dark:text-dark-400 dark:hover:text-dark-200"
       >
-        ← Back to Coins
+        {t('coinDetail.backToCoins')}
       </Link>
 
-      {/* Заголовок */}
+      {/* Заголовок / Header */}
       <div className="mb-8 flex flex-wrap items-start gap-4">
         <Image
           src={coin.image.large}
@@ -84,7 +88,7 @@ export default function CoinDetailPage({ params }: PageProps) {
             </h1>
             <Badge>{coin.symbol.toUpperCase()}</Badge>
             <Badge variant="primary">
-              Rank #{coin.market_data.market_cap_rank}
+              {t('coinDetail.rank')} #{coin.market_data.market_cap_rank}
             </Badge>
           </div>
           <div className="mt-2 flex items-center gap-3">
@@ -96,12 +100,17 @@ export default function CoinDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Статистика */}
+      {/* График / Chart */}
+      <div className="mb-8">
+        <PriceChart coinId={id} coinName={coin.name} />
+      </div>
+
+      {/* Статистика / Statistics */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Изменения цены */}
+        {/* Изменения цены / Price changes */}
         <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
           <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-            Price Changes
+            {t('coinDetail.priceChanges')}
           </h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -119,26 +128,26 @@ export default function CoinDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Рыночные данные */}
+        {/* Рыночные данные / Market data */}
         <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
           <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-            Market Data
+            {t('coinDetail.marketData')}
           </h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-dark-500">Market Cap</span>
+              <span className="text-dark-500">{t('coins.marketCap')}</span>
               <span className="font-medium text-dark-900 dark:text-dark-50">
                 {formatCompact(marketCap)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-dark-500">24h Volume</span>
+              <span className="text-dark-500">{t('coinDetail.volume')}</span>
               <span className="font-medium text-dark-900 dark:text-dark-50">
                 {formatCompact(volume)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-dark-500">Circulating Supply</span>
+              <span className="text-dark-500">{t('coinDetail.circulatingSupply')}</span>
               <span className="font-medium text-dark-900 dark:text-dark-50">
                 {formatCompact(coin.market_data.circulating_supply)}
               </span>
@@ -146,20 +155,20 @@ export default function CoinDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* 24h диапазон */}
+        {/* 24h диапазон / 24h range */}
         <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
           <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-            24h Range
+            {t('coinDetail.range24h')}
           </h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-dark-500">High</span>
+              <span className="text-dark-500">{t('coinDetail.high')}</span>
               <span className="font-medium text-success-500">
                 {formatCurrency(high24h)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-dark-500">Low</span>
+              <span className="text-dark-500">{t('coinDetail.low')}</span>
               <span className="font-medium text-danger-500">
                 {formatCurrency(low24h)}
               </span>
@@ -178,40 +187,40 @@ export default function CoinDetailPage({ params }: PageProps) {
         {/* ATH / ATL */}
         <div className="rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800 md:col-span-2 lg:col-span-3">
           <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-            All-Time
+            {t('coinDetail.allTime')}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="flex items-center justify-between rounded-lg bg-success-50 p-4 dark:bg-success-900/20">
               <div>
-                <p className="text-sm text-dark-500">All-Time High</p>
+                <p className="text-sm text-dark-500">{t('coinDetail.ath')}</p>
                 <p className="text-xl font-bold text-success-600">
                   {formatCurrency(ath)}
                 </p>
               </div>
               <PriceChangeBadge
-                value={coin.market_data.ath_change_percentage.usd}
+                value={coin.market_data.ath_change_percentage?.usd || 0}
               />
             </div>
             <div className="flex items-center justify-between rounded-lg bg-danger-50 p-4 dark:bg-danger-900/20">
               <div>
-                <p className="text-sm text-dark-500">All-Time Low</p>
+                <p className="text-sm text-dark-500">{t('coinDetail.atl')}</p>
                 <p className="text-xl font-bold text-danger-600">
                   {formatCurrency(atl)}
                 </p>
               </div>
               <PriceChangeBadge
-                value={coin.market_data.atl_change_percentage.usd}
+                value={coin.market_data.atl_change_percentage?.usd || 0}
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Описание */}
+      {/* Описание / Description */}
       {coin.description.en && (
         <div className="mt-8 rounded-xl border border-dark-200 bg-white p-6 dark:border-dark-700 dark:bg-dark-800">
           <h3 className="mb-4 font-semibold text-dark-900 dark:text-dark-50">
-            About {coin.name}
+            {t('coinDetail.about')} {coin.name}
           </h3>
           <div
             className="prose prose-sm max-w-none text-dark-600 dark:prose-invert dark:text-dark-400"

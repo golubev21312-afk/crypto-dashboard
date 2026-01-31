@@ -1,6 +1,11 @@
 /**
  * Переводы приложения
  * Поддерживаемые языки: English, Русский, ไทย, 中文
+ * 
+ * ---
+ * 
+ * Application translations
+ * Supported languages: English, Russian, Thai, Chinese
  */
 
 export const locales = ['en', 'ru', 'th', 'zh'] as const;
@@ -13,9 +18,6 @@ export const localeNames: Record<Locale, string> = {
   zh: '中文',
 };
 
-/**
- * Словарь переводов
- */
 export const translations: Record<Locale, Record<string, string>> = {
   en: {
     // Navigation
@@ -63,6 +65,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'coinDetail.ath': 'All-Time High',
     'coinDetail.atl': 'All-Time Low',
     'coinDetail.about': 'About',
+    'coinDetail.errorLoading': 'Error loading coin',
+
+    // Chart
+    'chart.title': 'Price Chart',
+    'chart.period': 'Period',
 
     // Portfolio
     'portfolio.title': 'Portfolio',
@@ -78,6 +85,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.value': 'Value',
     'portfolio.remove': 'Remove',
     'portfolio.avgPrice': 'Avg',
+    'portfolio.pl': 'P/L',
 
     // Modal
     'modal.addAsset': 'Add Asset',
@@ -86,6 +94,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'modal.coin': 'Coin',
     'modal.purchasePrice': 'Purchase Price (USD)',
     'modal.cancel': 'Cancel',
+    'modal.add': 'Add',
 
     // Trending
     'trending.title': 'Trending',
@@ -93,7 +102,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Common
     'common.loading': 'Loading...',
     'common.error': 'Error',
-    'common.errorLoading': 'Failed to load',
+    'common.errorLoading': 'Failed to load data',
   },
 
   ru: {
@@ -142,6 +151,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'coinDetail.ath': 'Исторический максимум',
     'coinDetail.atl': 'Исторический минимум',
     'coinDetail.about': 'О монете',
+    'coinDetail.errorLoading': 'Ошибка загрузки монеты',
+
+    // Chart
+    'chart.title': 'График цены',
+    'chart.period': 'Период',
 
     // Portfolio
     'portfolio.title': 'Портфель',
@@ -157,6 +171,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.value': 'Стоимость',
     'portfolio.remove': 'Удалить',
     'portfolio.avgPrice': 'Сред',
+    'portfolio.pl': 'П/У',
 
     // Modal
     'modal.addAsset': 'Добавить актив',
@@ -165,6 +180,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'modal.coin': 'Монета',
     'modal.purchasePrice': 'Цена покупки (USD)',
     'modal.cancel': 'Отмена',
+    'modal.add': 'Добавить',
 
     // Trending
     'trending.title': 'В тренде',
@@ -172,7 +188,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Common
     'common.loading': 'Загрузка...',
     'common.error': 'Ошибка',
-    'common.errorLoading': 'Ошибка загрузки',
+    'common.errorLoading': 'Ошибка загрузки данных',
   },
 
   th: {
@@ -221,6 +237,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'coinDetail.ath': 'สูงสุดตลอดกาล',
     'coinDetail.atl': 'ต่ำสุดตลอดกาล',
     'coinDetail.about': 'เกี่ยวกับ',
+    'coinDetail.errorLoading': 'ไม่สามารถโหลดข้อมูลเหรียญ',
+
+    // Chart
+    'chart.title': 'กราฟราคา',
+    'chart.period': 'ช่วงเวลา',
 
     // Portfolio
     'portfolio.title': 'พอร์ตโฟลิโอ',
@@ -236,6 +257,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.value': 'มูลค่า',
     'portfolio.remove': 'ลบ',
     'portfolio.avgPrice': 'เฉลี่ย',
+    'portfolio.pl': 'กำไร/ขาดทุน',
 
     // Modal
     'modal.addAsset': 'เพิ่มสินทรัพย์',
@@ -244,6 +266,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'modal.coin': 'เหรียญ',
     'modal.purchasePrice': 'ราคาซื้อ (USD)',
     'modal.cancel': 'ยกเลิก',
+    'modal.add': 'เพิ่ม',
 
     // Trending
     'trending.title': 'กำลังมาแรง',
@@ -251,7 +274,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Common
     'common.loading': 'กำลังโหลด...',
     'common.error': 'ข้อผิดพลาด',
-    'common.errorLoading': 'โหลดไม่สำเร็จ',
+    'common.errorLoading': 'โหลดข้อมูลไม่สำเร็จ',
   },
 
   zh: {
@@ -300,6 +323,11 @@ export const translations: Record<Locale, Record<string, string>> = {
     'coinDetail.ath': '历史最高',
     'coinDetail.atl': '历史最低',
     'coinDetail.about': '关于',
+    'coinDetail.errorLoading': '加载币种失败',
+
+    // Chart
+    'chart.title': '价格图表',
+    'chart.period': '时间段',
 
     // Portfolio
     'portfolio.title': '投资组合',
@@ -315,6 +343,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.value': '价值',
     'portfolio.remove': '删除',
     'portfolio.avgPrice': '均价',
+    'portfolio.pl': '盈亏',
 
     // Modal
     'modal.addAsset': '添加资产',
@@ -323,6 +352,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'modal.coin': '币种',
     'modal.purchasePrice': '购买价格 (USD)',
     'modal.cancel': '取消',
+    'modal.add': '添加',
 
     // Trending
     'trending.title': '热门趋势',
@@ -330,6 +360,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Common
     'common.loading': '加载中...',
     'common.error': '错误',
-    'common.errorLoading': '加载失败',
+    'common.errorLoading': '加载数据失败',
   },
 };
