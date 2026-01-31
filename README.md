@@ -1,165 +1,153 @@
-C Crypto Dashboard
+# Crypto Dashboard
 
-Современный трекер криптовалютного портфеля на Next.js, TypeScript и TanStack Query.
+Современный трекер криптовалютного портфеля на Next.js с оптимизированной производительностью.
 
-![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue?style=flat-square&logo=typescript)
-![TanStack Query](https://img.shields.io/badge/TanStack_Query-5.x-red?style=flat-square)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css)
+A modern cryptocurrency portfolio tracker built with Next.js and optimized for performance.
 
-## 🚀 Возможности
+---
 
-- 📊 Реальные курсы криптовалют (CoinGecko API)
-- 💼 Управление портфелем с сохранением в localStorage
-- 📈 Интерактивные графики цен
-- 🌙 Тёмная и светлая тема
-- 📱 Полностью адаптивный дизайн
-- ⚡ Оптимизированная производительность с кешированием
+## 🚀 Возможности / Features
 
-## 🛠 Технологии
+- 📊 Реальные курсы криптовалют / Real-time cryptocurrency prices
+- 💼 Управление портфелем / Portfolio management
+- 🌍 4 языка: EN, RU, TH, ZH / 4 languages
+- 🌙 Тёмная/светлая тема / Dark/light theme
+- 📱 Адаптивный дизайн / Responsive design
+- ⚡ Оптимизированная производительность / Optimized performance
 
-| Категория | Технология |
-|-----------|------------|
+---
+
+## 🛠 Технологии / Tech Stack
+
+| Категория / Category | Технология / Technology |
+|---------------------|------------------------|
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript (strict mode) |
 | Styling | Tailwind CSS |
 | State | TanStack Query v5 |
-| API | CoinGecko (бесплатный) |
-| Testing | Jest + React Testing Library |
-| Linting | ESLint + Prettier |
+| API | CoinGecko |
+| Testing | Jest + RTL |
 
-## 📦 Установка
+---
+
+## ⚡ Оптимизации / Optimizations
+
+### React.memo
+
+Компоненты `CoinRow` и `StatCard` обёрнуты в `React.memo` для предотвращения лишних ре-рендеров.
+
+Components `CoinRow` and `StatCard` wrapped in `React.memo` to prevent unnecessary re-renders.
+
+```tsx
+export const CoinRow = memo(function CoinRow({ coin, index }) {
+  // ...
+});
+```
+
+### useMemo & useCallback
+
+Мемоизация вычислений и стабильные ссылки на функции.
+
+Memoized computations and stable function references.
+
+```tsx
+const filteredCoins = useMemo(() => {
+  return coins?.filter(coin => 
+    coin.name.toLowerCase().includes(search)
+  );
+}, [coins, search]);
+
+const handleSearch = useCallback((e) => {
+  setSearch(e.target.value);
+}, []);
+```
+
+### Custom Hooks
+
+| Хук / Hook | Описание / Description |
+|-----------|----------------------|
+| `useDebounce` | Отложенное обновление / Delayed updates |
+| `useLocalStorage` | Типизированный localStorage / Typed localStorage |
+| `useMediaQuery` | Адаптивность / Responsive helpers |
+
+### Error Boundary
+
+Перехват ошибок без падения приложения.
+
+Error catching without app crashes.
+
+```tsx
+<ErrorBoundary>
+  <MyComponent />
+</ErrorBoundary>
+```
+
+### Lazy Loading
+
+Ленивая загрузка изображений с Intersection Observer.
+
+Lazy image loading with Intersection Observer.
+
+---
+
+## 📦 Установка / Installation
 
 ```bash
-# Клонировать репозиторий
 git clone https://github.com/yourusername/crypto-dashboard.git
 cd crypto-dashboard
-
-# Установить зависимости
 npm install
-
-# Запустить dev-сервер
 npm run dev
 ```
 
-Открой [http://localhost:3000](http://localhost:3000)
+---
 
-## 📜 Скрипты
+## 📜 Скрипты / Scripts
 
-| Команда | Описание |
-|---------|----------|
-| `npm run dev` | Dev-сервер |
-| `npm run build` | Production сборка |
-| `npm run start` | Production сервер |
-| `npm run lint` | Проверка ESLint |
-| `npm run type-check` | Проверка TypeScript |
-| `npm test` | Запуск тестов |
-| `npm run test:coverage` | Тесты с покрытием |
+| Команда / Command | Описание / Description |
+|------------------|----------------------|
+| `npm run dev` | Dev-сервер / Dev server |
+| `npm run build` | Production сборка / Production build |
+| `npm test` | Запуск тестов / Run tests |
+| `npm run lint` | Проверка кода / Code check |
 
-## 📁 Структура проекта
+---
+
+## 📁 Структура / Structure
 
 ```
 src/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # Корневой layout
-│   ├── page.tsx            # Главная страница
-│   └── globals.css         # Глобальные стили
-│
+├── app/                # Next.js pages
 ├── components/
-│   ├── ui/                 # UI-компоненты
-│   │   ├── Button/
-│   │   ├── Input/
-│   │   ├── Card/
-│   │   ├── Modal/
-│   │   ├── Table/
-│   │   ├── Skeleton/
-│   │   ├── Badge/
-│   │   └── Spinner/
-│   ├── features/           # Бизнес-компоненты
-│   └── layout/             # Layout-компоненты
-│
-├── hooks/                  # React хуки
-│   ├── use-coins.ts        # TanStack Query хуки
-│   └── use-portfolio.ts    # Управление портфелем
-│
+│   ├── ui/            # UI components
+│   ├── features/      # Business components
+│   └── layout/        # Layout components
+├── hooks/             # Custom hooks
 ├── lib/
-│   ├── api/                # API клиент
-│   │   ├── client.ts       # HTTP клиент
-│   │   ├── coins.ts        # API функции
-│   │   └── config.ts       # Конфигурация
-│   ├── providers/          # React провайдеры
-│   └── utils/              # Утилиты
-│
-├── types/                  # TypeScript типы
-│   ├── coin.ts
-│   └── portfolio.ts
-│
-└── __tests__/              # Тесты
+│   ├── api/          # API client
+│   ├── i18n/         # Translations
+│   └── providers/    # React providers
+└── types/            # TypeScript types
 ```
 
-## 🧩 UI-компоненты
+---
 
-| Компонент | Описание |
-|-----------|----------|
-| Button | 6 вариантов, 3 размера, состояние загрузки |
-| Input | Label, ошибки, helper text, иконки |
-| Card | Составной: Header, Content, Footer |
-| Modal | Portal, анимации, клавиатура |
-| Table | Типизированные колонки, сортировка |
-| Skeleton | Загрузочные состояния |
-| Badge | Метки и статусы |
-| Spinner | Индикаторы загрузки |
+## ✅ Roadmap
 
-## 🔌 API Хуки
+- [x] Настройка проекта / Project setup
+- [x] UI-компоненты / UI components
+- [x] API интеграция / API integration
+- [x] Основные страницы / Main pages
+- [x] Мультиязычность / Multi-language
+- [x] Оптимизация / Optimization
+- [ ] E2E тесты / E2E tests
+- [ ] PWA поддержка / PWA support
 
-```typescript
-// Список монет
-const { data, isLoading, error } = useCoins({ perPage: 20 });
+---
 
-// Детали монеты
-const { data } = useCoinDetails('bitcoin');
-
-// График цены
-const { data } = useMarketChart('bitcoin', 'usd', '7D');
-
-// Глобальные данные
-const { data } = useGlobalData();
-
-// Трендовые монеты
-const { data } = useTrendingCoins();
-```
-
-## 📊 Тестирование
-
-```bash
-# Запуск тестов
-npm test
-
-# С покрытием
-npm run test:coverage
-```
-
-**Покрытие тестами:**
-- Button: 100%
-- Input: 100%
-- Badge: 100%
-- Utilities: 100%
-
-## 🗺 Roadmap
-
-- [x] Настройка проекта
-- [x] UI-компоненты
-- [x] API интеграция
-- [ ] Dashboard страница
-- [ ] Управление портфелем
-- [ ] История транзакций
-- [ ] Графики цен
-- [ ] Оптимизация
-
-## 📄 Лицензия
+## 📄 Лицензия / License
 
 MIT
 
 ---
 
-Сделано с ❤️ как портфолио-проект
+Сделано с ❤️ / Made with ❤️

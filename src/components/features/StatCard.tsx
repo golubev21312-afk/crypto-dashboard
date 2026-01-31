@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui';
 
@@ -12,8 +13,20 @@ interface StatCardProps {
 
 /**
  * StatCard — карточка со статистикой
+ * 
+ * Обёрнут в React.memo — перерисуется только при изменении props.
+ * Это важно т.к. карточки часто используются в grid-сетках,
+ * и изменение одной карточки не должно вызывать ре-рендер других.
+ * 
+ * ---
+ * 
+ * StatCard — statistics card
+ * 
+ * Wrapped in React.memo — re-renders only when props change.
+ * Important because cards are often used in grids,
+ * and changing one card shouldn't re-render others.
  */
-export function StatCard({
+export const StatCard = memo(function StatCard({
   title,
   value,
   change,
@@ -69,4 +82,4 @@ export function StatCard({
       )}
     </div>
   );
-}
+});

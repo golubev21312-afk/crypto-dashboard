@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn, formatCurrency, formatCompact } from '@/lib/utils';
@@ -11,8 +12,18 @@ interface CoinRowProps {
 
 /**
  * CoinRow — строка с информацией о монете
+ * 
+ * Обёрнут в React.memo для предотвращения лишних ре-рендеров.
+ * Компонент перерисуется только если изменились coin или index.
+ * 
+ * ---
+ * 
+ * CoinRow — row with coin information
+ * 
+ * Wrapped in React.memo to prevent unnecessary re-renders.
+ * Component will only re-render if coin or index changes.
  */
-export function CoinRow({ coin, index }: CoinRowProps) {
+export const CoinRow = memo(function CoinRow({ coin, index }: CoinRowProps) {
   return (
     <Link
       href={`/coins/${coin.id}`}
@@ -21,12 +32,12 @@ export function CoinRow({ coin, index }: CoinRowProps) {
         'transition-colors hover:bg-dark-50 dark:hover:bg-dark-800/50'
       )}
     >
-      {/* Ранг */}
+      {/* Ранг / Rank */}
       <span className="w-8 text-center text-sm text-dark-500">
         {index + 1}
       </span>
 
-      {/* Монета */}
+      {/* Монета / Coin */}
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <Image
           src={coin.image}
@@ -43,19 +54,19 @@ export function CoinRow({ coin, index }: CoinRowProps) {
         </div>
       </div>
 
-      {/* Цена */}
+      {/* Цена / Price */}
       <div className="text-right">
         <p className="font-medium text-dark-900 dark:text-dark-50">
           {formatCurrency(coin.current_price)}
         </p>
       </div>
 
-      {/* Изменение 24h */}
+      {/* Изменение 24h / 24h Change */}
       <div className="w-24 text-right">
         <PriceChangeBadge value={coin.price_change_percentage_24h || 0} />
       </div>
 
-      {/* Market Cap (скрыто на мобильных) */}
+      {/* Market Cap (скрыто на мобильных / hidden on mobile) */}
       <div className="hidden w-32 text-right md:block">
         <p className="text-sm text-dark-600 dark:text-dark-400">
           {formatCompact(coin.market_cap)}
@@ -63,10 +74,14 @@ export function CoinRow({ coin, index }: CoinRowProps) {
       </div>
     </Link>
   );
-}
+});
 
 /**
  * CoinRowSkeleton — скелетон для загрузки
+ * 
+ * ---
+ * 
+ * CoinRowSkeleton — loading skeleton
  */
 export function CoinRowSkeleton() {
   return (
