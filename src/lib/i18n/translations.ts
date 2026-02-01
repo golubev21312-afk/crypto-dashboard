@@ -1,10 +1,5 @@
 /**
  * Переводы приложения
- * Поддерживаемые языки: English, Русский, ไทย, 中文
- * 
- * ---
- * 
- * Application translations
  * Supported languages: English, Russian, Thai, Chinese
  */
 
@@ -86,6 +81,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.remove': 'Remove',
     'portfolio.avgPrice': 'Avg',
     'portfolio.pl': 'P/L',
+    'portfolio.date': 'Date',
+    'portfolio.buyPrice': 'Buy Price',
+    'portfolio.transaction': 'transaction',
+    'portfolio.transactions': 'transactions',
 
     // Modal
     'modal.addAsset': 'Add Asset',
@@ -172,6 +171,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.remove': 'Удалить',
     'portfolio.avgPrice': 'Сред',
     'portfolio.pl': 'П/У',
+    'portfolio.date': 'Дата',
+    'portfolio.buyPrice': 'Цена покупки',
+    'portfolio.transaction': 'транзакция',
+    'portfolio.transactions': 'транзакций',
 
     // Modal
     'modal.addAsset': 'Добавить актив',
@@ -258,6 +261,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.remove': 'ลบ',
     'portfolio.avgPrice': 'เฉลี่ย',
     'portfolio.pl': 'กำไร/ขาดทุน',
+    'portfolio.date': 'วันที่',
+    'portfolio.buyPrice': 'ราคาซื้อ',
+    'portfolio.transaction': 'รายการ',
+    'portfolio.transactions': 'รายการ',
 
     // Modal
     'modal.addAsset': 'เพิ่มสินทรัพย์',
@@ -344,6 +351,10 @@ export const translations: Record<Locale, Record<string, string>> = {
     'portfolio.remove': '删除',
     'portfolio.avgPrice': '均价',
     'portfolio.pl': '盈亏',
+    'portfolio.date': '日期',
+    'portfolio.buyPrice': '买入价',
+    'portfolio.transaction': '笔交易',
+    'portfolio.transactions': '笔交易',
 
     // Modal
     'modal.addAsset': '添加资产',

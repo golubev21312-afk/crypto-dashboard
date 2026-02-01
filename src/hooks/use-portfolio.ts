@@ -1,7 +1,50 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { PortfolioAsset } from '@/types';
+'use client';
 
-const STORAGE_KEY = 'crypto-dashboard-portfolio';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+/**
+ * Транзакция покупки
+ * Purchase transaction
+ */
+export interface Transaction {
+  id: string;
+  amount: number;
+  purchasePrice: number;
+  purchaseDate: string;
+}
+
+/**
+ * Актив портфеля (группа транзакций одной монеты)
+ * Portfolio asset (group of transactions for one coin)
+ */
+export interface PortfolioAsset {
+  coinId: string;
+  symbol: string;
+  name: string;
+  transactions: Transaction[];
+}
+
+/**
+ * Данные для добавления транзакции
+ * Data for adding transaction
+ */
+export interface AddTransactionData {
+  coinId: string;
+  symbol: string;
+  name: string;
+  amount: number;
+  purchasePrice: number;
+  purchaseDate: string;
+}
+
+const STORAGE_KEY = 'crypto-portfolio-v2';
+
+/**
+ * Генерация уникального ID
+ */
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+}
 
 /**
  * Загрузка портфеля из localStorage
@@ -10,11 +53,15 @@ function loadPortfolio(): PortfolioAsset[] {
   if (typeof window === 'undefined') return [];
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch {
-    return [];
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Error loading portfolio:', error);
   }
+
+  return [];
 }
 
 /**
@@ -26,17 +73,16 @@ function savePortfolio(assets: PortfolioAsset[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
   } catch (error) {
-    console.error('Failed to save portfolio:', error);
+    console.error('Error saving portfolio:', error);
   }
 }
 
 /**
- * usePortfolio — управление портфелем криптовалют
- *
- * Хранит данные в localStorage для персистентности.
- *
- * @example
- * const { assets, addAsset, removeAsset, updateAsset } = usePortfolio();
+ * usePortfolio — хук для управления портфелем с группировкой по монетам
+ * 
+ * ---
+ * 
+ * usePortfolio — portfolio management hook with coin grouping
  */
 export function usePortfolio() {
   const [assets, setAssets] = useState<PortfolioAsset[]>([]);
@@ -44,7 +90,8 @@ export function usePortfolio() {
 
   // Загрузка при монтировании
   useEffect(() => {
-    setAssets(loadPortfolio());
+    const loaded = loadPortfolio();
+    setAssets(loaded);
     setIsLoaded(true);
   }, []);
 
@@ -56,73 +103,129 @@ export function usePortfolio() {
   }, [assets, isLoaded]);
 
   /**
-   * Добавить актив в портфель
+   * Добавление транзакции (группирует по coinId)
    */
-  const addAsset = useCallback(
-    (asset: Omit<PortfolioAsset, 'id'>) => {
-      const newAsset: PortfolioAsset = {
-        ...asset,
-        id: `${asset.coinId}-${Date.now()}`,
-      };
-      setAssets((prev) => [...prev, newAsset]);
-      return newAsset;
-    },
-    []
-  );
+  const addTransaction = useCallback((data: AddTransactionData) => {
+    const transaction: Transaction = {
+      id: generateId(),
+      amount: data.amount,
+      purchasePrice: data.purchasePrice,
+      purchaseDate: data.purchaseDate,
+    };
 
-  /**
-   * Удалить актив из портфеля
-   */
-  const removeAsset = useCallback((assetId: string) => {
-    setAssets((prev) => prev.filter((a) => a.id !== assetId));
+    setAssets((prev) => {
+      const existingIndex = prev.findIndex((a) => a.coinId === data.coinId);
+
+      if (existingIndex >= 0) {
+        // Добавляем транзакцию к существующему активу
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          transactions: [...updated[existingIndex].transactions, transaction],
+        };
+        return updated;
+      } else {
+        // Создаём новый актив
+        return [
+          ...prev,
+          {
+            coinId: data.coinId,
+            symbol: data.symbol,
+            name: data.name,
+            transactions: [transaction],
+          },
+        ];
+      }
+    });
   }, []);
 
   /**
-   * Обновить актив
+   * Удаление транзакции
    */
-  const updateAsset = useCallback(
-    (assetId: string, updates: Partial<PortfolioAsset>) => {
-      setAssets((prev) =>
-        prev.map((a) => (a.id === assetId ? { ...a, ...updates } : a))
-      );
+  const removeTransaction = useCallback(
+    (coinId: string, transactionId: string) => {
+      setAssets((prev) => {
+        return prev
+          .map((asset) => {
+            if (asset.coinId !== coinId) return asset;
+
+            const filteredTransactions = asset.transactions.filter(
+              (t) => t.id !== transactionId
+            );
+
+            // Если транзакций не осталось — удаляем актив
+            if (filteredTransactions.length === 0) {
+              return null;
+            }
+
+            return {
+              ...asset,
+              transactions: filteredTransactions,
+            };
+          })
+          .filter((asset): asset is PortfolioAsset => asset !== null);
+      });
     },
     []
   );
 
   /**
-   * Очистить портфель
+   * Удаление всего актива (всех транзакций монеты)
+   */
+  const removeAsset = useCallback((coinId: string) => {
+    setAssets((prev) => prev.filter((a) => a.coinId !== coinId));
+  }, []);
+
+  /**
+   * Очистка портфеля
    */
   const clearPortfolio = useCallback(() => {
     setAssets([]);
   }, []);
 
   /**
-   * Получить общее количество монеты в портфеле
+   * Получение уникальных coinId
    */
-  const getTotalAmount = useCallback(
+  const getUniqueCoinIds = useCallback((): string[] => {
+    return assets.map((a) => a.coinId);
+  }, [assets]);
+
+  /**
+   * Расчёт суммарных данных по активу
+   */
+  const getAssetSummary = useCallback(
     (coinId: string) => {
-      return assets
-        .filter((a) => a.coinId === coinId)
-        .reduce((sum, a) => sum + a.amount, 0);
+      const asset = assets.find((a) => a.coinId === coinId);
+      if (!asset) return null;
+
+      const totalAmount = asset.transactions.reduce(
+        (sum, t) => sum + t.amount,
+        0
+      );
+      const totalInvested = asset.transactions.reduce(
+        (sum, t) => sum + t.amount * t.purchasePrice,
+        0
+      );
+      const avgPrice = totalAmount > 0 ? totalInvested / totalAmount : 0;
+
+      return {
+        totalAmount,
+        totalInvested,
+        avgPrice,
+        transactionCount: asset.transactions.length,
+      };
     },
     [assets]
   );
 
-  /**
-   * Получить уникальные ID монет в портфеле
-   */
-  const getUniqueCoinIds = useCallback(() => {
-    return [...new Set(assets.map((a) => a.coinId))];
-  }, [assets]);
-
   return {
     assets,
     isLoaded,
-    addAsset,
+    addTransaction,
+    removeTransaction,
     removeAsset,
-    updateAsset,
     clearPortfolio,
-    getTotalAmount,
     getUniqueCoinIds,
+    getAssetSummary,
   };
 }
